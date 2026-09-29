@@ -1,0 +1,606 @@
+/* css/card.css — Qualità visiva Deckoli con status e colori di Platina */
+
+/* =============================================
+   CARD WRAP — contenitore con prospettiva
+   ============================================= */
+
+.card-wrap {
+  position: relative;
+  aspect-ratio: 5 / 7;
+  border-radius: var(--card-radius);
+  animation: cardIn 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  perspective: 1000px;
+  --c: var(--s-backlog);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  content-visibility: auto;
+}
+
+.card-wrap[data-s="platinum"]  { --c: var(--s-platinum); }
+.card-wrap[data-s="completed"] { --c: var(--s-completed); }
+.card-wrap[data-s="played"]    { --c: var(--s-played); }
+.card-wrap[data-s="backlog"]   { --c: var(--s-backlog); }
+.card-wrap[data-s="abandoned"] { --c: var(--s-abandoned); }
+
+@keyframes cardIn {
+  from { opacity: 0; transform: scale(.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* =============================================
+   CARD GLOW — alone esterno (stile deckoli)
+   ============================================= */
+
+.card-glow {
+  position: absolute;
+  inset: -3px;
+  border-radius: calc(var(--card-radius) + 3px);
+  z-index: -1;
+  opacity: 0;
+  filter: blur(15px);
+  transition: opacity .3s ease, filter .3s ease;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%,
+    color-mix(in srgb, var(--c) 70%, transparent) 0%,
+    transparent 60%
+  );
+}
+
+.card-wrap:hover .card-glow { opacity: .35; }
+.card-wrap[data-s="completed"]:hover .card-glow { opacity: .5; filter: blur(20px); }
+.card-wrap[data-s="played"]:hover    .card-glow,
+.card-wrap[data-s="backlog"]:hover   .card-glow,
+.card-wrap[data-s="abandoned"]:hover .card-glow { opacity: 0; }
+.card-wrap[data-s="platinum"] .card-glow {
+  inset: -10px;
+  border-radius: calc(var(--card-radius) + 10px);
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(190,225,255,.95)  0%,
+    rgba(150,205,255,.65) 30%,
+    rgba(180,220,255,.25) 58%,
+    transparent           72%
+  );
+}
+
+/* Aura luminosa statica sulle carte platinate in griglia */
+.card-wrap[data-s="platinum"] {
+  box-shadow:
+    0 0  10px  5px rgba(200, 232, 255, 0.20),
+    0 0  23px 13px rgba(168, 216, 255, 0.10),
+    0 0  41px 23px rgba(140, 200, 255, 0.05);
+}
+
+.card-wrap.card-lg-wrap[data-s="platinum"] {
+  box-shadow: none;
+}
+
+.card-wrap.card-lg-wrap .card[data-s="platinum"] .card-inner::before {
+  background: color-mix(in srgb, var(--c) 75%, white);
+  box-shadow: none;
+}
+
+.card-wrap.card-lg-wrap:hover .card-glow { opacity: 0 !important; filter: blur(15px) !important; }
+.card-wrap.card-lg-wrap:hover .card-glare,
+.card-wrap.card-lg-wrap:hover .art-shine  { opacity: 0 !important; }
+
+/* =============================================
+   FLIPPER (popup dettaglio)
+   ============================================= */
+
+.card-flipper {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform .65s cubic-bezier(.4, 0, .2, 1);
+}
+
+.card-wrap.flipped .card-flipper { transform: rotateY(180deg); }
+
+.card-wrap.flipped  .card-glow,
+.card-wrap.flipping .card-glow { opacity: 0 !important; }
+
+/* Pointer-events coretti durante il flip */
+.card-wrap.flipped .card-flipper .card { pointer-events: none; }
+.card-wrap:not(.flipped) .card-back-face { pointer-events: none; }
+
+/* =============================================
+   CARTA — elemento principale
+   ============================================= */
+
+.card {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  cursor: pointer;
+  --c: var(--s-backlog);
+  --glow-x: 50%;
+  --glow-y: 50%;
+  will-change: transform;
+  transition: transform .2s ease-out;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.card[data-s="platinum"]  { --c: var(--s-platinum); }
+.card[data-s="completed"] { --c: var(--s-completed); }
+.card[data-s="played"]    { --c: var(--s-played); }
+.card[data-s="backlog"]   { --c: var(--s-backlog); }
+.card[data-s="abandoned"] { --c: var(--s-abandoned); }
+
+/* =============================================
+   CARD FRAME — sfondo scuro con tinta status
+   ============================================= */
+
+.card-frame {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow:
+    0 15px 30px rgba(0,0,0,.6),
+    inset 0 1px rgba(255,255,255,.12),
+    inset 0 -1px rgba(0,0,0,.4);
+  overflow: hidden;
+  background: linear-gradient(160deg, #2a2a4a, #1a1a2e, #0f0f1a);
+}
+
+.card[data-s="platinum"] .card-frame {
+  background: linear-gradient(160deg, #26263a, #181828, #0e0e1e);
+  box-shadow: 0 15px 30px rgba(0,0,0,.5),
+    inset 0 1px rgba(200,215,235,.25), inset 0 -1px rgba(0,0,0,.3),
+    0 0 25px rgba(188,210,255,.1);
+}
+.card[data-s="completed"] .card-frame {
+  background: linear-gradient(160deg, #231904, #160f02, #0d0802);
+  box-shadow: 0 15px 30px rgba(0,0,0,.6),
+    inset 0 1px color-mix(in srgb, var(--c) 50%, transparent),
+    inset 0 -1px color-mix(in srgb, var(--c) 20%, transparent),
+    0 0 20px color-mix(in srgb, var(--c) 12%, transparent);
+}
+.card[data-s="played"] .card-frame {
+  background: linear-gradient(160deg, #0c1930, #081020, #040a14);
+  box-shadow: 0 15px 30px rgba(0,0,0,.6),
+    inset 0 1px color-mix(in srgb, var(--c) 50%, transparent),
+    inset 0 -1px color-mix(in srgb, var(--c) 20%, transparent),
+    0 0 22px color-mix(in srgb, var(--c) 12%, transparent);
+}
+.card[data-s="backlog"] .card-frame {
+  background: linear-gradient(160deg, #0c2616, #08180d, #040e07);
+  box-shadow: 0 15px 30px rgba(0,0,0,.6),
+    inset 0 1px color-mix(in srgb, var(--c) 50%, transparent),
+    inset 0 -1px color-mix(in srgb, var(--c) 20%, transparent),
+    0 0 20px color-mix(in srgb, var(--c) 12%, transparent);
+}
+.card[data-s="abandoned"] .card-frame {
+  background: linear-gradient(160deg, #2a0808, #1a0404, #0f0202);
+  box-shadow: 0 15px 30px rgba(0,0,0,.6),
+    inset 0 1px color-mix(in srgb, var(--c) 50%, transparent),
+    inset 0 -1px color-mix(in srgb, var(--c) 20%, transparent),
+    0 0 20px color-mix(in srgb, var(--c) 12%, transparent);
+}
+
+/* =============================================
+   COPERTINA — full-bleed stile deckoli
+   ============================================= */
+
+.card-art-full {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--card-radius) - 4px);
+  background-size: cover;
+  background-position: center top;
+  z-index: 0;
+  transform: scale(1.05);
+  transition: transform .15s ease-out;
+  will-change: transform;
+}
+
+.art-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 46px;
+  color: rgba(255,255,255,.85);
+  text-shadow: 0 2px 10px rgba(0,0,0,.4);
+  pointer-events: none;
+}
+
+.card[data-s="backlog"]   .card-art-full { filter: saturate(.7) brightness(.86); }
+.card[data-s="abandoned"] .card-art-full { filter: grayscale(.6) brightness(.66) contrast(.96); }
+
+/* =============================================
+   CARD INNER — perfettamente allineato alla cover
+   ============================================= */
+
+.card-inner {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--card-radius) - 4px);
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1;
+  transform: translateZ(0);
+}
+
+/* Bordo colorato status — tecnica mask stile deckoli */
+.card-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--card-radius) - 4px);
+  z-index: 10;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 3.5px;
+  background: color-mix(in srgb, var(--c) 75%, white);
+}
+
+/* Platinum: type-line con gradiente iridescente statico */
+.card[data-s="platinum"] .type-line {
+  background: linear-gradient(90deg,
+    color-mix(in srgb, #dfe6f5 20%, rgba(0,0,0,.55)),
+    color-mix(in srgb, #c4b0ff 22%, rgba(0,0,0,.5)),
+    color-mix(in srgb, #90e0ff 22%, rgba(0,0,0,.5)),
+    color-mix(in srgb, #ffe0a0 20%, rgba(0,0,0,.52)),
+    color-mix(in srgb, #ffb0d8 20%, rgba(0,0,0,.52)),
+    color-mix(in srgb, #dfe6f5 20%, rgba(0,0,0,.55))
+  );
+  border-bottom-color: rgba(188,210,255,.25);
+}
+
+.card[data-s="platinum"] .type-text {
+  color: rgba(255,255,255,.92);
+  text-shadow: 0 0 8px rgba(188,210,255,.5), 0 1px 3px rgba(0,0,0,.6);
+}
+
+/* Platinum: bordo ghiaccio luminoso statico */
+.card[data-s="platinum"] .card-inner::before {
+  padding: 3.5px;
+  background: repeating-linear-gradient(110deg,
+    #ffffff   0%,
+    #a8d8ff  12%,
+    #e8f6ff  24%,
+    #b4e0ff  36%,
+    #ffffff  48%
+  );
+  box-shadow: 0 0 8px rgba(140,200,255,.45), 0 0 3px rgba(255,255,255,.25);
+}
+
+/* =============================================
+   HEADER
+   ============================================= */
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  background: linear-gradient(180deg, rgba(0,0,0,.88), rgba(0,0,0,.6));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  border-radius: calc(var(--card-radius) - 4px) calc(var(--card-radius) - 4px) 0 0;
+  flex-shrink: 0;
+}
+
+.game-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,.5);
+  margin: 0;
+  width: 100%;
+}
+
+/* =============================================
+   SPACER
+   ============================================= */
+
+.card-spacer { flex: 1; }
+
+/* =============================================
+   TESTO INFERIORE
+   ============================================= */
+
+.card-text-area {
+  background: rgba(0,0,0,.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255,255,255,.1);
+  border-radius: 0 0 calc(var(--card-radius) - 4px) calc(var(--card-radius) - 4px);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.type-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  background: color-mix(in srgb, var(--c) 22%, rgba(0,0,0,.55));
+  border-bottom: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+  min-height: 22px;
+}
+
+.type-text {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--c) 85%, white);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 4px rgba(0,0,0,.6);
+  white-space: nowrap;
+}
+
+.card-info-list {
+  padding: 5px 10px 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.info-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.info-label {
+  font-family: var(--font-display);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: rgba(255,255,255,.38);
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.info-value {
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: rgba(255,255,255,.82);
+  letter-spacing: .2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* =============================================
+   HOLO — overlay olografico iridescente
+   ============================================= */
+
+.holo {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--card-radius) - 4px);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  mix-blend-mode: color-dodge;
+  background-image:
+    repeating-linear-gradient(110deg,
+      rgba(255,119,115,.5)  0%,  rgba(255,237,143,.5)  8%,
+      rgba(168,255,143,.5) 16%,  rgba(131,247,255,.5) 24%,
+      rgba(120,148,255,.5) 32%,  rgba(216,117,255,.5) 40%,
+      rgba(255,119,115,.5) 48%),
+    radial-gradient(circle at var(--glow-x) var(--glow-y),
+      rgba(255,255,255,.5), transparent 45%);
+  background-size: 300% 300%, 100% 100%;
+  background-position: var(--glow-x) var(--glow-y), 0 0;
+  background-blend-mode: overlay;
+  transition: opacity .25s ease;
+}
+
+/* Platinum: holo ghiaccio con pulse */
+.card[data-s="platinum"] .holo {
+  background-image:
+    repeating-linear-gradient(110deg,
+      rgba(255,255,255,.55)   0%,
+      rgba(170,220,255,.45)  12%,
+      rgba(235,250,255,.4)   24%,
+      rgba(190,230,255,.48)  36%,
+      rgba(255,255,255,.55)  48%),
+    radial-gradient(circle at var(--glow-x) var(--glow-y),
+      rgba(255,255,255,.7), transparent 45%);
+  background-blend-mode: normal;
+  opacity: .18;
+}
+
+/* =============================================
+   GLARE — riflesso al mouse (stile deckoli)
+   ============================================= */
+
+.card-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--card-radius) - 4px);
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity .3s ease;
+  background-image: radial-gradient(
+    farthest-corner circle at var(--glow-x) var(--glow-y),
+    rgba(255,255,255,.35)  0%,
+    rgba(255,255,255,.15) 25%,
+    rgba(0,0,0,.15)       85%
+  );
+  mix-blend-mode: overlay;
+}
+
+/* =============================================
+   ART SHINE — luccichio art al mouse
+   ============================================= */
+
+.art-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--card-radius) - 4px);
+  background: radial-gradient(
+    ellipse 80% 80% at var(--glow-x) var(--glow-y),
+    rgba(255,255,255,.25)  0%,
+    rgba(255,255,255,.1)  30%,
+    transparent           70%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s ease;
+  z-index: 2;
+}
+
+.card-wrap:hover .card-glare,
+.card-wrap:hover .art-shine { opacity: 1; }
+
+.card-wrap[data-s="played"]:hover .card-glare,
+.card-wrap[data-s="played"]:hover .art-shine,
+.card-wrap[data-s="backlog"]:hover .card-glare,
+.card-wrap[data-s="backlog"]:hover .art-shine,
+.card-wrap[data-s="abandoned"]:hover .card-glare,
+.card-wrap[data-s="abandoned"]:hover .art-shine { opacity: 0; }
+
+/* =============================================
+   CARTA GRANDE (popup dettaglio flippabile)
+   ============================================= */
+
+.card-wrap.card-lg-wrap {
+  width: min(330px, 76vw, calc((100vh - 170px) * 0.714));
+  aspect-ratio: 5 / 7;
+  animation: inspectIn .3s cubic-bezier(.2, .8, .2, 1) both;
+  cursor: pointer;
+}
+
+@keyframes inspectIn {
+  from { opacity: 0; transform: scale(.9) translateY(10px); }
+  to   { opacity: 1; }
+}
+
+/* =============================================
+   RETRO DELLA CARTA
+   ============================================= */
+
+.card-back-face {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--c) 20%, #1c1c2a) 0%,
+    color-mix(in srgb, var(--c)  8%, #0f0f1a) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+  box-shadow: 0 8px 26px rgba(0,0,0,.55), inset 0 1px rgba(255,255,255,.08);
+  display: flex;
+  flex-direction: column;
+  padding: 12px 12px 10px;
+  gap: 8px;
+}
+
+.card-back-header {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--c);
+  text-align: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+  flex-shrink: 0;
+}
+
+.card-back-scroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--c) 40%, transparent) transparent;
+}
+
+.card-back-scroll::-webkit-scrollbar { width: 3px; }
+.card-back-scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--c) 50%, transparent);
+  border-radius: 2px;
+}
+
+.card-back-desc {
+  font-size: 12px;
+  line-height: 1.58;
+  color: rgba(255,255,255,.75);
+  margin: 0;
+}
+
+.card-back-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.card-back-tags .tag {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--c) 18%, rgba(0,0,0,.4));
+  color: var(--c);
+  border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+}
+
+.card-back-actions {
+  display: flex;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+.card-back-actions button {
+  flex: 1;
+  padding: 7px 6px;
+  font-size: 10.5px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+
+.card-back-actions button:hover { opacity: .85; }
+
+.card-back-edit {
+  background: color-mix(in srgb, var(--c) 22%, rgba(255,255,255,.1));
+  color: var(--c);
+  border: 1px solid color-mix(in srgb, var(--c) 45%, transparent) !important;
+}
+
+.card-back-del {
+  background: rgba(255,70,70,.18);
+  color: #ff6b6b;
+  border: 1px solid rgba(255,70,70,.4) !important;
+}

@@ -1,0 +1,170 @@
+/* css/controls.css — Search, filters, status chips */
+.controls-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.search {
+  flex: 7 1 0;
+  min-width: 0;
+  position: relative;
+}
+
+.search input {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 11px 14px 11px 38px;
+  border-radius: 11px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.12s;
+}
+
+.search input:focus {
+  border-color: var(--accent);
+}
+
+.search > svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--faint);
+}
+
+/* ---- Sort custom dropdown ---- */
+.sort-wrap {
+  flex: 4 1 0;
+  min-width: 0;
+  position: relative;
+}
+
+.sort-btn {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 11px;
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  transition: border-color .12s;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sort-btn:focus { outline: none; }
+
+.sort-btn.active,
+.sort-btn:focus-visible {
+  border-color: var(--accent);
+}
+
+.sort-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 100%;
+  width: max-content;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 6px;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 300;
+  box-shadow: 0 8px 28px rgba(0,0,0,.6);
+}
+
+.sort-dropdown.open { display: flex; }
+
+.sort-option {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  white-space: nowrap;
+  transition: background .1s, color .1s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sort-option:hover { background: var(--panel); color: var(--text); }
+
+.sort-option.active {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.status-filter {
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.chip {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  transition: all 0.12s;
+}
+
+.chip[data-s="all"][data-active="true"] {
+  background: var(--accent-soft);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.chip[data-s="platinum"] {
+  --c: var(--s-platinum);
+}
+
+.chip[data-s="completed"] {
+  --c: var(--s-completed);
+}
+
+.chip[data-s="played"] {
+  --c: var(--s-played);
+}
+
+.chip[data-s="backlog"] {
+  --c: var(--s-backlog);
+}
+
+.chip[data-s="abandoned"] {
+  --c: var(--s-abandoned);
+}
+
+.chip[data-active="true"]:not([data-s="all"]) {
+  background: color-mix(in srgb, var(--c) 18%, transparent);
+  color: var(--c);
+  border-color: var(--c);
+}
+
+
+.chip:hover {
+  color: var(--text);
+}

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a0f" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Platina" />
+<title>PLATINA</title>
+<link rel="manifest" href="/manifest.json" />
+<link rel="icon" href="/icons/icon.png" type="image/png" />
+<link rel="apple-touch-icon" href="/icons/icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/base.css" />
+<link rel="stylesheet" href="css/buttons.css" />
+<link rel="stylesheet" href="css/topbar.css" />
+<link rel="stylesheet" href="css/controls.css" />
+<link rel="stylesheet" href="css/card.css" />
+<link rel="stylesheet" href="css/modal.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-title-row">
+      <img class="applogo" src="/icons/applogo.png" alt="" />
+      <div class="topbar-title">PLATINA</div>
+      <div class="topbar-actions">
+        <div class="lib-menu-wrap">
+          <button class="btn-dots" id="btn-menu" title="Opzioni libreria">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="lib-dropdown" id="lib-dropdown">
+            <button class="lib-menu-item" id="btn-export">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Libreria
+            </button>
+            <button class="lib-menu-item" id="btn-import-trigger">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Upload Libreria
+            </button>
+          </div>
+        </div>
+        <input type="file" id="import-file" accept="application/json" style="display:none;" />
+      </div>
+    </div>
+    <div class="controls-row">
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search" type="text" placeholder="Filtra la collezione..." />
+      </div>
+      <div class="sort-wrap" id="sort-wrap">
+        <button class="sort-btn" id="sort-btn" aria-expanded="false">
+          <span id="sort-label">Nome (A-Z)</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="sort-dropdown" id="sort-dropdown">
+          <button class="sort-option" data-value="status-desc">Stato ↓</button>
+          <button class="sort-option" data-value="status-asc">Stato ↑</button>
+          <button class="sort-option active" data-value="name">Nome (A-Z)</button>
+        </div>
+      </div>
+    </div>
+    <div class="filter-row">
+      <div class="status-filter" id="status-filter"></div>
+      <div class="total-badge">
+        <span id="total-count">0</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<!-- Add / Edit modal -->
+<div class="overlay" id="form-overlay">
+  <div class="modal">
+    <div class="modal-head"><h2 id="form-title">Aggiungi gioco</h2><button class="x" data-close>&times;</button></div>
+    <div class="modal-body">
+      <div class="rawg-box" id="rawg-box">
+        <label id="rawg-label">Cerca nel database</label>
+        <div class="rawg-input-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="rawg-search" type="text" placeholder="es. Elden Ring..." autocomplete="off" />
+          <div class="rawg-spin" id="rawg-spin"></div>
+        </div>
+        <div class="rawg-results" id="rawg-results"></div>
+      </div>
+      <!-- Campi nascosti: popolati automaticamente dalla ricerca -->
+      <input type="hidden" id="f-title" />
+      <input type="hidden" id="f-year" />
+      <input type="hidden" id="f-cover" />
+      <input type="hidden" id="f-developer" />
+      <input type="hidden" id="f-score" />
+      <textarea id="f-description" style="display:none;"></textarea>
+      <input type="hidden" id="f-tags" />
+      <div class="field">
+        <label>Stato del gioco *</label>
+        <div class="status-select" id="status-select">
+          <button type="button" data-s="platinum" aria-pressed="false">Platinato</button>
+          <button type="button" data-s="completed" aria-pressed="false">Completato</button>
+          <button type="button" data-s="played" aria-pressed="false">Giocato</button>
+          <button type="button" data-s="backlog" aria-pressed="false">Backlog</button>
+          <button type="button" data-s="abandoned" aria-pressed="false">Abbandonato</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Piattaforma</label>
+        <select id="f-platform">
+          <option value="PlayStation">PlayStation</option>
+          <option value="Xbox">Xbox</option>
+          <option value="Game Pass">Game Pass</option>
+          <option value="Steam">Steam</option>
+          <option value="GOG">GOG</option>
+        </select>
+      </div>
+      <div class="form-actions"><button class="btn-primary" id="f-save">AGGIUNGI ALLA COLLEZIONE</button><button class="btn-ghost" data-close>Annulla</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast di conferma aggiunta -->
+<div class="toast" id="add-toast" aria-live="polite">Gioco inserito con successo</div>
+
+<!-- Detail modal -->
+<div class="overlay" id="detail-overlay">
+  <button class="inspector-close" data-close title="Chiudi">&times;</button>
+  <div class="inspector" id="detail-body"></div>
+</div>
+
+<!-- Confirm delete dialog -->
+<div class="overlay" id="confirm-overlay">
+  <div class="modal confirm-modal">
+    <div class="modal-body confirm-body">
+      <div class="confirm-icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      </div>
+      <h3 class="confirm-heading">Elimina gioco</h3>
+      <p class="confirm-sub">Stai per eliminare dalla collezione:</p>
+      <div class="confirm-game-name" id="confirm-game-name"></div>
+      <p class="confirm-warn">Questa azione è irreversibile.</p>
+      <div class="confirm-actions">
+        <button class="btn-danger confirm-ok" id="confirm-ok">Elimina</button>
+        <button class="btn-ghost confirm-cancel" id="confirm-cancel">Annulla</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<nav class="bottombar">
+  <div class="bottombar-inner">
+    <div class="plat-badge" id="plat-badge">
+      <span id="plat-badge-num">0</span>
+      <div class="gem"></div>
+    </div>
+    <div class="comp-badge" id="comp-badge">
+      <span id="comp-badge-num">0</span>
+      <div class="gem-gold"></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn-primary" id="btn-add">AGGIUNGI</button>
+  </div>
+</nav>
+
+<!-- Script modulari JavaScript -->
+<script src="js/constants.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/state.js"></script>
+<script src="js/api.js"></script>
+<script src="js/render.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/tilt.js"></script>
+<script src="js/search.js"></script>
+<script src="js/form.js"></script>
+<script src="js/reveal.js"></script>
+<script src="js/detail.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/main.js"></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js").catch(function () {});
+  }
+</script>
+</body>
+</html>

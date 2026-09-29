@@ -1,0 +1,20 @@
+{
+  "name": "Platina — Libreria Giochi",
+  "short_name": "Platina",
+  "description": "La tua collezione di giochi con carte da collezione animate.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "lang": "it",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

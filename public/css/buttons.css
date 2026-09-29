@@ -1,0 +1,73 @@
+/* css/buttons.css — Stili per i bottoni */
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.btn-primary {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #7c5cff, #b06cff);
+  color: #fff;
+  border: none;
+  padding: 11px 18px;
+  border-radius: 11px;
+  font-size: 13px;
+  box-shadow: 0 6px 22px rgba(124, 92, 255, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 9px 28px rgba(124, 92, 255, 0.5);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-ghost {
+  background: var(--panel-2);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 9px 13px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  transition: border-color 0.12s, color 0.12s;
+}
+
+.btn-ghost:hover {
+  color: var(--text);
+  border-color: #3a3a52;
+}
+
+.btn-danger {
+  background: rgba(255, 80, 80, 0.12);
+  color: #ff7676;
+  border: 1px solid rgba(255, 80, 80, 0.3);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.btn-danger:hover {
+  background: rgba(255, 80, 80, 0.2);
+}
+
+.btn-icon {
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.12s, background 0.12s;
+}
+
+.btn-icon:hover {
+  color: var(--text);
+  background: var(--panel-2);
+}

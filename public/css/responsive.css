@@ -1,0 +1,17 @@
+/* css/responsive.css — Media queries e accessibilità */
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card[data-s="platinum"],
+  .card[data-s="platinum"] .holo {
+    animation: none !important;
+    transition: none !important;
+  }
+}
